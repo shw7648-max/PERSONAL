@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffdebd">
+  <title>타코타코! — 타코야끼 가게 v3 · 소스 주문 챌린지</title>
+  <style>
+    :root{--ink:#5e3341;--pink:#ff7694;--rose:#eb567c;--cream:#fff8e9;--shadow:#b96673;--yellow:#ffd36d;--orange:#ffaf64;--mint:#c6f0dc}
+    *{box-sizing:border-box}body{margin:0;color:var(--ink);font-family:"Trebuchet MS","Malgun Gothic","Apple SD Gothic Neo",sans-serif;background:radial-gradient(circle at 15% 10%,#fff2b0 0 4%,transparent 4.1%),radial-gradient(circle at 84% 21%,#ffcae0 0 4%,transparent 4.1%),linear-gradient(145deg,#fce7dd,#ffd4d7 60%,#ffe6bb);min-height:100vh;padding:20px 12px 30px}button{font:inherit;color:inherit;cursor:pointer}button:focus-visible{outline:4px solid #70b9e0;outline-offset:3px}[hidden]{display:none!important}
+    .game{position:relative;max-width:1030px;margin:auto;border:5px solid #a65b70;border-radius:30px;background:#fff9ee;box-shadow:0 13px 0 #a65b70,0 25px 32px #a65b7044;overflow:hidden}
+    .awning{height:49px;background:repeating-linear-gradient(90deg,#fd6b87 0 76px,#ffeed9 76px 152px);border-bottom:5px solid #ca657c;position:relative}.awning:after{content:"";position:absolute;left:0;right:0;bottom:-17px;height:19px;background:radial-gradient(ellipse 36px 17px at 38px 0,#ff6686 97%,transparent 100%) left bottom / 152px 18px repeat-x,radial-gradient(ellipse 36px 17px at 38px 0,#ffedda 97%,transparent 100%) 76px bottom / 152px 18px repeat-x;pointer-events:none}
+    .top{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:30px 28px 14px}.logo{display:flex;align-items:center;gap:12px}.logo-icon{font-size:38px;width:67px;height:67px;display:grid;place-items:center;background:#ffe6a9;border:3px solid #db9c74;border-radius:22px;box-shadow:3px 4px 0 #edb296;transform:rotate(-6deg)}.logo h1{margin:0;color:#e95177;font-size:34px;line-height:1;letter-spacing:-2px;text-shadow:2px 2px #ffd9ac}.logo p{margin:6px 0 0;font-size:12px;font-weight:800;letter-spacing:1.6px;color:#a27571}.daypill{background:#fff0c9;padding:12px 18px;border:2px dashed #e5a76c;border-radius:30px;font-size:13px;font-weight:900;transform:rotate(2deg);white-space:nowrap}
+    .hud{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 28px 18px}.hudbox{border:2px solid #eecabc;border-bottom-width:5px;border-radius:17px;background:#fff;min-height:73px;padding:10px 13px;display:flex;justify-content:space-between;align-items:center;gap:6px}.hudbox .label{font-size:12px;font-weight:900;color:#aa8886}.hudbox .value{font-size:23px;font-weight:1000;letter-spacing:-1px}.hudbox .symbol{font-size:24px}.hudbox.time.warn{border-color:#f17881;background:#fff0ec}.hudbox.time.warn .value{color:#e74e6b}
+    .gamearea{display:grid;grid-template-columns:minmax(0,1.52fr) minmax(280px,.93fr);gap:18px;padding:0 28px 22px}.cook,.side{min-width:0}.section-title{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:1000;margin:0 0 10px;font-size:18px}.section-title .hint{font-size:11px;font-weight:800;color:#a47f81;background:#fff0e3;padding:6px 9px;border-radius:20px}
+    .grill{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;padding:21px;border-radius:24px;background:linear-gradient(145deg,#93546b 0%,#613d52 48%,#80475d 100%);border:7px solid #ce8b83;box-shadow:inset 0 6px 13px #46243670,0 8px 0 #aa6475}.grill:before,.grill:after{content:"✦";position:absolute;color:#f8b88f;font-size:18px;top:5px}.grill:before{left:7px}.grill:after{right:7px}
+    .hole{position:relative;min-width:0;aspect-ratio:1/1.02;border-radius:50%;border:5px solid #b58b84;background:radial-gradient(circle at 47% 63%,#4f3444 0 49%,#2e1e30 72%);box-shadow:inset 1px 5px 7px #1e162ac2,0 2px 0 #e8aea1;display:flex;align-items:center;justify-content:center;padding:0;transition:transform .12s,border-color .15s;overflow:hidden}.hole:hover{transform:scale(1.055);border-color:#f7d2a7}.hole.selected{outline:3px solid #ffe38a;outline-offset:1px}.hole .num{position:absolute;left:7px;top:3px;color:#fff6e9aa;font-size:10px;font-weight:900;z-index:3}.hole .plus{color:#8e6976;font-size:26px;line-height:1}.ball{width:76%;height:76%;border-radius:50%;display:block;position:relative;background:radial-gradient(circle at 34% 28%,#fffef0,#f5d7a2 76%,#d5ac86);box-shadow:inset -6px -7px 0 #e4b38577,2px 4px 5px #221b295c;animation:poof .2s ease-out}.ball:before{content:"";position:absolute;inset:17%;border-radius:50%;border:2px dashed #ddac8199}.ball .octo{position:absolute;left:39%;top:31%;width:25%;height:25%;background:#ed8491;border-radius:50% 48% 40% 40%;box-shadow:2px 2px 0 #d65d7d;transform:rotate(-18deg)}.ball .octo:after{content:"";position:absolute;top:23%;left:31%;width:3px;height:3px;border-radius:50%;background:#7c4158;box-shadow:5px 0 #7c4158}.hole[data-stage=heating] .ball{background:radial-gradient(circle at 34% 25%,#fff1bd,#edc68c 80%,#c88b62)}.hole[data-stage=readyFlip]{border-color:#ffe17c;box-shadow:inset 1px 5px 7px #1e162a,0 0 14px 4px #ffe39477;animation:pulse 1s infinite}.hole[data-stage=readyFlip] .ball{background:radial-gradient(circle at 36% 25%,#ffe7a3,#e8b16a 70%,#c5804e)}.hole[data-stage=flipped] .ball{background:radial-gradient(circle at 36% 25%,#fce4a6,#d99657 72%,#ae6b40)}.hole[data-stage=done]{border-color:#e6bd80}.hole[data-stage=done] .ball{background:radial-gradient(circle at 33% 24%,#ffdfa0,#cc8546 66%,#96502f)}.hole[data-stage=done] .ball:before{content:"〰";font-size:32px;font-weight:900;color:#743f35;left:20%;top:11%;right:auto;bottom:auto;border:none;transform:rotate(-20deg);text-shadow:0 2px #fff2c9}.hole[data-stage=done] .ball:after{content:"✳";position:absolute;color:#34755b;font-size:17px;top:51%;left:51%}.hole[data-stage=burnt] .ball{background:radial-gradient(circle at 35% 27%,#655553,#352c34 79%,#211b27)}.hole[data-stage=burnt] .ball:before{border-color:#8e6661}.hole[data-stage=burnt]:after{content:"♨";font-size:21px;position:absolute;top:0;right:12px;color:#fff1db;animation:steam 1.4s infinite}.hole .tag{position:absolute;bottom:3%;left:8%;right:8%;border-radius:6px;background:#fff3dddf;color:#784b43;font-size:10px;line-height:1.25;font-weight:1000;text-align:center;padding:3px 2px;z-index:3;white-space:nowrap}.hole[data-stage=readyFlip] .tag{background:#ffe267;color:#86403a}.hole[data-stage=done] .tag{background:#d7f8d9;color:#3b6e55}.hole[data-stage=burnt] .tag{background:#ffd5dc;color:#9f4b5f}.hole .heatbar{position:absolute;bottom:21%;left:19%;height:4px;width:62%;border-radius:4px;background:#543447ad;overflow:hidden;z-index:3}.heatbar span{display:block;height:100%;background:#ffeb95;transition:width .12s linear}
+    .hole .heatmark{position:absolute;z-index:4;right:8%;top:12%;font-size:9px;line-height:1;border-radius:8px;padding:3px 4px;font-weight:1000;color:#fbe9ca;background:#916075cc;pointer-events:none}.hole .heatmark.hot{color:#7b302e;background:#ffe3a0}.hole .heatmark.cool{color:#e2f5fc;background:#538296}.heat-legend{margin:11px 2px 0;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:11px;font-weight:900;color:#a27c7c}.heat-legend .legend-chips{display:flex;gap:6px;flex-wrap:wrap}.heat-legend .chip{border-radius:12px;padding:4px 7px;background:#fff0de;border:1px solid #eed2b9}.heat-legend .hot-chip{background:#fff0ba;color:#9a6251}.heat-legend .cool-chip{background:#e4f4fc;color:#51829c}
+    .ball .sauce-stripes{position:absolute;z-index:3;inset:19% 15%;border-radius:50%;background:repeating-linear-gradient(161deg,transparent 0 7px,#703523 7px 12px,transparent 12px 19px);filter:drop-shadow(1px 1px 1px #ffdc9c);transform:rotate(-9deg);pointer-events:none}.hole[data-sauced="true"] .tag{background:#ffe9b0;color:#8a492e}.trayball{position:relative}.trayball.sauced:after{content:"〰";position:absolute;left:23%;top:19%;font-size:17px;font-weight:1000;color:#803d29;transform:rotate(-25deg);pointer-events:none}.tray-extra{font-size:11px;color:#a26c62;font-weight:900;margin:7px 0 0}.tray-extra b{color:#d26d50}
+    .rack-label{display:flex;justify-content:space-between;margin:19px 0 10px;gap:10px;font-size:15px;font-weight:1000}.rack-label small{font-weight:800;color:#aa8580}.tools{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}.tool{position:relative;min-height:89px;background:#fff;border:2px solid #f0cabd;border-bottom:5px solid #e9b2a7;border-radius:15px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;transition:transform .1s,background .1s}.tool:hover{transform:translateY(-2px);background:#fff5e5}.tool.active{background:#ffe3a3;border-color:#e5a05d;box-shadow:0 0 0 3px #ffd98f66}.tool .emoji{font-size:26px}.tool .name{font-size:12px;font-weight:1000}.tool .hotkey{position:absolute;top:4px;left:8px;font-size:10px;color:#aa8c7c;font-weight:900}.tool.active .hotkey{color:#ad7658}
+    .customer{background:#fff1ec;border:3px solid #efb8a9;border-radius:22px;padding:16px;position:relative;overflow:hidden;box-shadow:0 5px 0 #efd0c3}.customer .customer-head{display:flex;justify-content:space-between;align-items:center;gap:8px}.customer .name{font-size:12px;color:#9c7579;font-weight:900}.bubble{background:#fff;border:2px solid #eac3ba;border-radius:19px 19px 19px 4px;padding:12px;margin-top:11px;box-shadow:2px 3px 0 #f7d6cd;font-size:14px;font-weight:900;line-height:1.5}.bubble strong{display:block;font-size:21px;color:#e85c78;line-height:1.5}.avatar{font-size:68px;line-height:1.15;filter:drop-shadow(0 6px 0 #efb9ab)}.patience-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:900;color:#a57973;margin:16px 0 6px}.patience{height:12px;border-radius:20px;background:#eecdc3;border:2px solid #dca69c;overflow:hidden}.patience .fill{height:100%;background:linear-gradient(90deg,#ff9a98,#ffe08b);border-radius:12px;transition:width .12s linear}.patience.low .fill{background:#ef6e7b}.tray{margin-top:18px;background:#fff;border:3px dashed #edc5ac;border-radius:20px;padding:15px}.tray-title{display:flex;justify-content:space-between;align-items:center;font-weight:1000;font-size:15px}.counter{font-size:12px;padding:4px 8px;border-radius:20px;background:#ffe6b2;color:#9e6452}.trayballs{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:13px 0 15px}.trayball{aspect-ratio:1;border-radius:50%;border:2px dashed #e6d4c0;display:grid;place-items:center;font-size:18px;background:#fff9ed}.trayball.full{border:2px solid #e8a767;background:linear-gradient(#fff7d6,#ffe0a7);box-shadow:inset 0 -3px #e8c285}.deliver{width:100%;border:2px solid #bd6076;border-bottom:6px solid #aa5268;background:#fb718c;color:white;padding:13px 8px;border-radius:15px;font-size:17px;font-weight:1000;text-shadow:0 2px #c35b70;transition:transform .12s,background .12s}.deliver:not(:disabled):hover{background:#eb5e7b;transform:translateY(-2px)}.deliver:disabled{background:#d9bec2;border-color:#c8aeb4;text-shadow:none;cursor:not-allowed;opacity:.88}.tray-note{font-size:11px;color:#a8877e;text-align:center;margin:9px 0 0;font-weight:800}
+    .bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#ffe9da;border-top:2px dashed #ecc3b8;padding:13px 28px;font-size:12px;font-weight:900;color:#9d7075}.bottom .right{display:flex;align-items:center;gap:8px}.sound{border:2px solid #e6b2a1;background:#fff8ed;border-radius:20px;padding:6px 10px;font-size:12px;font-weight:900}.notice{position:absolute;left:50%;top:21%;transform:translate(-50%,-25px);z-index:5;background:#fffdf5;border:3px solid #e9a176;box-shadow:0 5px 0 #aa6475;padding:9px 15px;border-radius:20px;white-space:nowrap;max-width:90%;text-align:center;font-size:14px;font-weight:1000;opacity:0;pointer-events:none;transition:opacity .14s,transform .2s}.notice.show{opacity:1;transform:translate(-50%,0)}
+    .modal{position:absolute;z-index:10;inset:0;background:#56344dc2;display:flex;align-items:center;justify-content:center;padding:15px}.modal-card{width:min(530px,100%);border:5px solid #aa5a76;border-radius:26px;background:#fff9eb;padding:25px 25px 26px;text-align:center;box-shadow:0 12px 0 #6c415d,0 22px 42px #46263855}.modal .mini{font-size:12px;font-weight:1000;color:#d06e83;letter-spacing:2px}.modal h2{font-size:36px;line-height:1.16;margin:8px 0 8px;color:#e9577b;text-shadow:2px 3px #ffe0af;letter-spacing:-2px}.modal p{margin:8px 0 14px;font-size:13px;line-height:1.7;font-weight:800;color:#987375}.tutorial{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:19px 0}.tutorial .step{border:2px solid #f0cabb;border-radius:14px;background:#fff;padding:12px 3px 9px}.tutorial .step span{font-size:28px;display:block}.tutorial .step b{font-size:11px;display:block;margin-top:7px}.start{border:2px solid #ac526e;border-bottom:6px solid #ac526e;background:#fa6a8b;color:white;padding:14px 30px;border-radius:17px;font-size:19px;font-weight:1000;width:100%;margin-top:9px;text-shadow:0 2px #cb4b70}.start:hover{background:#e95b82}.footnote{font-size:11px!important;color:#ac8d89!important;margin:10px 0 0!important}.final-figure{font-size:52px;margin:7px 0 0}.results{display:flex;justify-content:center;gap:18px;margin:15px 0;font-size:14px;font-weight:900}.results b{display:block;color:#e9577b;font-size:25px}.spark{position:absolute;z-index:8;width:10px;height:10px;border-radius:3px;pointer-events:none;animation:spark .75s ease-out forwards}
+    @keyframes pulse{50%{box-shadow:inset 1px 5px 7px #1e162a,0 0 18px 6px #ffe394bc}}@keyframes poof{from{transform:scale(.5)}to{transform:scale(1)}}@keyframes steam{from{transform:translateY(5px);opacity:0}50%{opacity:1}to{transform:translateY(-8px);opacity:0}}@keyframes spark{to{transform:translate(var(--x),var(--y)) rotate(270deg);opacity:0}}
+    @media(max-width:830px){.gamearea{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr;gap:13px;align-items:start}.side>.section-title{grid-column:1/-1;margin-bottom:-3px}.tray{margin-top:0}.top{padding:28px 19px 13px}.hud{padding:0 19px 18px}.gamearea{padding:0 19px 20px}.bottom{padding:13px 19px}}
+    @media(max-width:560px){body{padding:7px 5px 20px}.game{border-width:3px;border-radius:19px}.awning{height:32px}.top{padding:22px 11px 12px}.logo{gap:8px}.logo h1{font-size:25px}.logo p{font-size:9px}.logo-icon{font-size:27px;width:48px;height:48px;border-radius:16px}.daypill{font-size:10px;padding:8px}.hud{gap:5px;padding:0 11px 14px}.hudbox{min-height:59px;display:block;padding:8px 7px;border-radius:11px}.hudbox .label{font-size:10px}.hudbox .value{font-size:17px;margin-top:3px}.hudbox .symbol{display:none}.gamearea{padding:0 11px 17px;gap:13px}.section-title{font-size:15px}.section-title .hint{font-size:9px}.grill{padding:11px;gap:5px;border-width:5px;border-radius:18px}.hole{border-width:3px}.hole .num{font-size:8px;left:4px;top:1px}.hole .heatmark{top:13%;right:8%;font-size:7px;padding:2px 3px}.heat-legend{font-size:9px}.heat-legend .chip{padding:3px 5px}.hole .tag{font-size:7px;padding:2px 0;bottom:1%}.hole[data-stage=done] .ball:before{font-size:18px}.hole .heatbar{bottom:19%}.rack-label{margin-top:14px}.tools{gap:5px}.tool{min-height:71px;border-radius:11px}.tool .emoji{font-size:21px}.tool .name{font-size:9px}.tool .hotkey{font-size:9px;left:5px;top:3px}.side{grid-template-columns:1fr}.side>.section-title{margin-bottom:-4px}.customer{padding:12px}.customer .customer-head{align-items:center}.avatar{font-size:54px}.bubble{font-size:12px}.bubble strong{font-size:19px}.tray{padding:12px}.trayballs{margin:9px 0 11px}.bottom{padding:10px 11px;font-size:10px;flex-wrap:wrap}.modal-card{padding:21px 15px}.modal h2{font-size:29px}.tutorial{gap:4px}.tutorial .step{padding:9px 1px}.tutorial .step span{font-size:23px}.tutorial .step b{font-size:10px}}
+
+    /* v3: empty metallic mold / burnt charcoal ball must not look similar */
+    .grill{background:linear-gradient(138deg,#8494a0 0%,#516273 44%,#748692 100%);border-color:#e4b4a0;box-shadow:inset 0 5px 20px #2635439f,0 8px 0 #aa6475}
+    .hole{border-color:#cedbe0;background:radial-gradient(ellipse at 35% 25%,#92a5b3 0%,#5a7082 38%,#2a3e50 73%,#152638 100%);box-shadow:inset 0 5px 9px #101d31e0,0 2px 1px #ecf6f7ab}
+    .hole[data-stage="empty"]{border-color:#c6d5dd;background:radial-gradient(circle at 32% 20%,#a4b6be 0 8%,#718796 27%,#4b6579 53%,#283d52 76%,#1a2c40 100%);box-shadow:inset 0 7px 15px #101d2dcc,inset 0 -3px 4px #bacad366,0 2px 0 #f0f4f6}
+    .hole[data-stage="empty"]:before{content:"";position:absolute;inset:11%;border:2px solid #b9cbd14d;border-radius:50%;box-shadow:inset 0 4px 10px #17273aa6;pointer-events:none}
+    .hole .plus{color:#e4f8ff;font-weight:1000;font-size:33px;text-shadow:0 2px 4px #142638;transform:translateY(-6px)}
+    .hole .empty-caption{position:absolute;bottom:20%;left:0;right:0;z-index:3;color:#f0faff;line-height:1;font-size:10px;font-weight:1000;text-shadow:0 1px 4px #12263c;pointer-events:none}
+    .hole:not([data-stage="empty"]):not([data-stage="burnt"]){border-color:#dfb798;background:radial-gradient(circle at 47% 63%,#493445 0 48%,#242034 75%)}
+    .hole[data-stage="burnt"]{border:5px solid #ff7665;background:radial-gradient(circle,#192e39,#354b59);box-shadow:inset 0 5px 8px #131921,0 0 0 3px #fff0d6,0 0 13px 5px #ff664d9b;animation:burnAlert 1.2s ease-in-out infinite}
+    .hole[data-stage="burnt"] .ball{width:82%;height:82%;background:radial-gradient(ellipse at 33% 25%,#676063 0 5%,#29262b 27%,#16141b 58%,#090b12 84%,#020509 100%);border:2px solid #413439;box-shadow:inset -6px -8px 6px #070b11,inset 4px 4px 4px #70615e80,1px 4px 2px #1b1a20;transform:rotate(-14deg)}
+    .hole[data-stage="burnt"] .ball:before{content:"";position:absolute;inset:10%;border:0;border-radius:50%;background:radial-gradient(circle at 19% 33%,#f69656 0 2%,transparent 3%),radial-gradient(circle at 68% 68%,#b76e49 0 2%,transparent 3%),radial-gradient(circle at 77% 23%,#e4a162 0 1%,transparent 2%),radial-gradient(circle at 43% 73%,#b57850 0 1%,transparent 2%),radial-gradient(circle at 32% 58%,#bc7a50 0 1%,transparent 2%);opacity:.9}
+    .hole[data-stage="burnt"] .char-cracks{position:absolute;inset:3%;width:94%;height:94%;z-index:2;filter:drop-shadow(0 0 3px #ff7d4399)}
+    .hole[data-stage="burnt"] .burnt-x{position:absolute;z-index:3;inset:0;display:grid;place-items:center;color:#fff0cf;font-size:30px;font-weight:1000;text-shadow:0 2px 5px #090a0e,0 0 8px #ff543e}
+    .hole[data-stage="burnt"]:after{content:none}
+    .hole[data-stage="burnt"] .smoke{position:absolute;z-index:5;right:9%;top:-13%;font-size:28px;line-height:1;color:#fff8f1;text-shadow:0 1px 5px #dc7157;animation:smoke 1.7s ease-in-out infinite;pointer-events:none}
+    .hole[data-stage="burnt"] .tag{bottom:1%;left:0;right:0;background:#ef3e53;color:white;border:2px solid #fff1ce;font-size:10px;box-shadow:0 2px 4px #4b191e9e;letter-spacing:-.3px}
+    .hole[data-stage="readyFlip"]{border-color:#ffe17c!important}
+    .hole[data-stage="done"]{border-color:#ecc083!important}
+    .state-legend{display:flex;align-items:center;justify-content:flex-start;gap:11px;flex-wrap:wrap;margin:9px 2px 0;font-size:11px;font-weight:900;color:#775c66}
+    .state-legend span{display:inline-flex;align-items:center;gap:5px}
+    .state-legend .state-dot{width:17px;height:17px;border-radius:50%;display:inline-block;border:2px solid #c7d6da;background:radial-gradient(circle at 30% 20%,#a4b5c0,#263f54);flex:none}
+    .state-legend .state-dot.good{border-color:#d0a06e;background:radial-gradient(circle at 30% 22%,#ffe4a2,#bc723e)}
+    .state-legend .state-dot.bad{border-color:#ff655b;background:radial-gradient(circle at 30% 22%,#51505a,#06070c)}
+    .sauce-order-badge{display:inline-flex;align-items:center;gap:5px;margin-top:7px;background:#f0f5f0;border-radius:9px;padding:6px 9px;color:#347855;font-size:13px;line-height:1.3;font-weight:1000;border:1px solid #bcdfbd}
+    .sauce-order-badge.on{background:#fff1c6;color:#9d542c;border-color:#e9c278}
+    .sauce-order-badge.off{background:#eaf5ff;color:#476e94;border-color:#a6d4f3}
+    .mode-hint{font-size:11px;color:#886e78;font-weight:900;margin-top:11px;display:block}
+    .mode-hint.advanced{color:#c45464}
+    .trayball.full{cursor:pointer;position:relative;padding:0;font-family:inherit}
+    .trayball.full:hover{border-color:#dc6782;transform:translateY(-2px)}
+    .trayball .remove-mark{position:absolute;top:-5px;right:-4px;background:#e9637c;color:white;border-radius:50%;width:17px;height:17px;font-size:11px;line-height:16px;border:1px solid white}
+    .trayball.empty{cursor:default}
+    .tray-extra{line-height:1.6}
+    .deliver.mismatch{background:#c38955;border-color:#9e6844}
+    .tray-note.mismatch{color:#cd4e59;font-weight:1000}
+    @keyframes burnAlert{50%{box-shadow:inset 0 5px 8px #131921,0 0 0 3px #fff0d6,0 0 20px 7px #ff6139}}
+    @keyframes smoke{0%{transform:translateY(7px) rotate(-9deg);opacity:.4}50%{opacity:1}100%{transform:translateY(-9px) rotate(9deg);opacity:.3}}
+    @media(max-width:560px){.hole .plus{font-size:24px;transform:translateY(-5px)}.hole .empty-caption{font-size:7px;bottom:18%}.hole[data-stage="burnt"]{border-width:3px}.hole[data-stage="burnt"] .burnt-x{font-size:20px}.hole[data-stage="burnt"] .smoke{font-size:19px}.hole[data-stage="burnt"] .tag{font-size:7px;padding:1px 0}.state-legend{font-size:9px;gap:6px}.state-legend .state-dot{width:12px;height:12px}.sauce-order-badge{font-size:11px}.mode-hint{font-size:10px}}
+  </style>
+</head>
+<body>
+<main class="game" id="game" aria-label="타코야끼 가게 운영 게임">
+  <div class="awning" aria-hidden="true"></div>
+  <header class="top">
+    <div class="logo"><div class="logo-icon">🐙</div><div><h1>타코타코!</h1><p>TAKOYAKI ★ STREET SHOP</p></div></div>
+    <div class="daypill">♡ 오늘도 완판 도전 ♡</div>
+  </header>
+  <section class="hud" aria-label="게임 기록">
+    <div class="hudbox time" id="timeBox"><div><div class="label">⏰ 남은 시간</div><div class="value" id="time">03:00</div></div><span class="symbol">⌛</span></div>
+    <div class="hudbox"><div><div class="label">💰 오늘 매출</div><div class="value" id="money">0원</div></div><span class="symbol">🪙</span></div>
+    <div class="hudbox"><div><div class="label">✨ 연속 성공</div><div class="value" id="combo">0 COMBO</div></div><span class="symbol">🌟</span></div>
+    <div class="hudbox"><div><div class="label">❤️ 손님 만족도</div><div class="value" id="hearts">♥ ♥ ♥</div></div><span class="symbol">🎀</span></div>
+  </section>
+  <div class="gamearea">
+    <section class="cook">
+      <h2 class="section-title">🔥 지글지글 타코야끼 철판 <span class="hint">타이밍을 놓치면 타요!</span></h2>
+      <div class="grill" id="grill" aria-label="12구 타코야끼 철판"></div>
+      <div class="state-legend" aria-label="음식 상태 구분"><span><i class="state-dot"></i> + 빈 철판</span><span><i class="state-dot good"></i> 황금색 = 완성</span><span><i class="state-dot bad"></i> ⚠ 검정색 = 탄 음식 (눌러 버리기)</span></div>
+      <div class="heat-legend" aria-label="불판 위치별 온도 안내"><span>🔥 가운데가 조금 더 빨리 익어요!</span><div class="legend-chips"><span class="chip hot-chip">강 · 빠름</span><span class="chip">보통</span><span class="chip cool-chip">약 · 느림</span></div></div>
+      <div class="rack-label"><span>🥣 요리 도구</span><small>도구 선택 → 철판 클릭</small></div>
+      <div class="tools" id="tools">
+        <button class="tool active" data-tool="batter" type="button"><span class="hotkey">1</span><span class="emoji">🥣</span><span class="name">반죽 붓기</span></button>
+        <button class="tool" data-tool="octopus" type="button"><span class="hotkey">2</span><span class="emoji">🐙</span><span class="name">문어 넣기</span></button>
+        <button class="tool" data-tool="flip" type="button"><span class="hotkey">3</span><span class="emoji">🥢</span><span class="name">뒤집기</span></button>
+        <button class="tool" data-tool="sauce" type="button"><span class="hotkey">4</span><span class="emoji">🍯</span><span class="name">소스 뿌리기</span></button>
+        <button class="tool" data-tool="plate" type="button"><span class="hotkey">5</span><span class="emoji">🥡</span><span class="name">담아내기</span></button>
+      </div>
+    </section>
+    <aside class="side">
+      <h2 class="section-title">🛎️ 주문 받는 곳 <span class="hint">손님을 기다리게 하지 마!</span></h2>
+      <section class="customer" aria-label="현재 주문">
+        <div class="customer-head"><div><div class="name" id="guestName">첫 번째 손님</div><div class="bubble"><span id="guestTalk">어서 오세요!</span><strong id="guestOrder">타코야끼 3알 주세요!</strong><span class="sauce-order-badge" id="orderSauce">🍯 소스는 자유롭게!</span></div></div><div class="avatar" id="guestAvatar">👧🏻</div></div>
+        <span class="mode-hint" id="modeHint">🌱 초급 주문 · 소스는 자유!</span>
+        <div class="patience-row"><span>손님 기다리는 중...</span><span id="patienceText">여유만만 ♡</span></div>
+        <div class="patience" id="patienceBar"><div class="fill" id="patienceFill" style="width:100%"></div></div>
+      </section>
+      <section class="tray" aria-label="완성품 포장 상자">
+        <div class="tray-title"><span>🥡 포장 상자</span><span class="counter" id="trayCount">0 / 6알</span></div>
+        <div class="trayballs" id="trayBalls" aria-label="담은 타코야끼"></div>
+        <div class="tray-extra" id="trayExtra">🍯 소스 0알 · 포장된 알을 누르면 버릴 수 있어요</div>
+        <button type="button" class="deliver" id="deliver" disabled>타코야끼 전달하기 ♡</button>
+        <p class="tray-note" id="trayNote">포장된 알을 누르면 잘못 담은 음식을 뺄 수 있어요.</p>
+      </section>
+    </aside>
+  </div>
+  <footer class="bottom"><span>💡 반죽 → 문어 → 뒤집기 → 소스 확인 → 포장!　·　단축키 1~5 / Space</span><div class="right"><span id="ordersLabel">판매 0건</span><button type="button" class="sound" id="soundBtn" aria-pressed="false">🔇 효과음 OFF</button></div></footer>
+  <div class="notice" id="notice" role="status" aria-live="polite"></div>
+  <div class="modal" id="intro"><div class="modal-card"><div class="mini">★ 추억의 플래시 게임 ★</div><div style="font-size:56px;line-height:1;margin:7px 0">🐙 🥡 ✨</div><h2>타코야끼 가게<br>OPEN!</h2><p>3분 동안 타코야끼를 팔아 매출을 올려요!<br>가운데 칸은 빨리 익어요. 검게 탄 음식은 클릭해서 버려요!<br><b>4번째 손님부터 소스 추가/제외 주문이 시작돼요.</b></p><div class="tutorial"><div class="step"><span>🥣</span><b>① 반죽 붓기</b></div><div class="step"><span>🐙</span><b>② 문어 넣기</b></div><div class="step"><span>🥢</span><b>③ 노릇하게 뒤집기</b></div><div class="step"><span>🍯</span><b>④ 소스 확인</b></div><div class="step"><span>🥡</span><b>⑤ 담아서 판매!</b></div></div><button class="start" id="startBtn" type="button">🎀 장사 시작하기!</button><p class="footnote">마우스로 도구를 고르고 철판을 콕콕 클릭하세요.</p></div></div>
+  <div class="modal" id="ending" hidden><div class="modal-card"><div class="mini">★ 오늘의 영업 마감 ★</div><div class="final-figure" id="rankIcon">🏆</div><h2 id="endTitle">오늘도 완판!</h2><p id="endDesc">오늘의 기록을 확인해 보세요!</p><div class="results"><div>총매출<b id="endMoney">0원</b></div><div>판매 건수<b id="endOrders">0건</b></div><div>최고 콤보<b id="endCombo">0</b></div></div><button class="start" type="button" id="againBtn">↻ 다시 장사하기!</button></div></div>
+</main>
+<script>
+(()=>{
+  'use strict';
+  const $=id=>document.getElementById(id);
+  const grill=$('grill'), tools=$('tools');
+  const GUESTS=[
+    {name:'단골 손님 · 하은',avatar:'👧🏻',talk:'달콤짭짤한 게 먹고 싶어!'},
+    {name:'동네 학생 · 유나',avatar:'👩🏻',talk:'수업 끝나고 바로 달려왔어요!'},
+    {name:'직장인 · 준호',avatar:'👨🏻‍💼',talk:'퇴근길 최고의 간식이죠!'},
+    {name:'여행객 · 미나',avatar:'👩🏽',talk:'여기 타코야끼가 맛있다면서요?'},
+    {name:'꼬마 손님 · 민준',avatar:'👦🏻',talk:'따끈따끈하게 주세요!'},
+    {name:'동네 친구 · 수빈',avatar:'🧑🏻',talk:'친구랑 나눠 먹으려고요!'}
+  ];
+  const GAME_SECONDS=180;
+  // From upper-left to lower-right. Slight variations preserve fair timing while rewarding attention.
+  const HEAT=[.89,1.01,1.04,.90,1.02,1.14,1.12,1.01,.88,.99,1.00,.91];
+  let state='intro',selected='batter',wells=[],tray=[],money=0,combo=0,maxCombo=0,sold=0,lives=3,seconds=GAME_SECONDS;
+  let orderIndex=0,order={qty:3,patience:36,left:36,sauceMode:'free'},loop=null,last=0,soundOn=false,audio=null,noticeTimeout=null;
+  const labels={empty:'',batter:'문어 넣기',heating:'익는 중…',readyFlip:'지금 뒤집기!',flipped:'마저 굽기…',done:'완성! 담기',burnt:'⚠ 탔어요!'};
+  function newWell(){return {stage:'empty',age:0,sauced:false}}
+  function formatTime(t){let n=Math.max(0,Math.ceil(t));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
+  function coin(){return money.toLocaleString('ko-KR')+'원'}
+  function tone(freq=580,duration=.09,type='sine'){
+    if(!soundOn)return;
+    try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,audio.currentTime);g.gain.setValueAtTime(.065,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+duration)}catch(e){}
+  }
+  function toast(message){$('notice').textContent=message;$('notice').classList.add('show');clearTimeout(noticeTimeout);noticeTimeout=setTimeout(()=>$('notice').classList.remove('show'),1250)}
+  function chooseTool(tool){selected=tool;tools.querySelectorAll('.tool').forEach(el=>{el.classList.toggle('active',el.dataset.tool===tool);el.setAttribute('aria-pressed',String(el.dataset.tool===tool))});tone(490,.045)}
+  function start(){clearInterval(loop);state='playing';selected='batter';wells=Array.from({length:12},newWell);tray=[];money=0;combo=0;maxCombo=0;sold=0;lives=3;seconds=GAME_SECONDS;orderIndex=0;$('intro').hidden=true;$('ending').hidden=true;chooseTool('batter');nextOrder();render();last=performance.now();loop=setInterval(tick,100);toast('어서오세요! 첫 주문이 들어왔어요 🐙')}
+  function nextOrder(){
+    const idx=orderIndex,qty=idx===0?3:idx===1?4:idx===2?4:idx===3?5:6;
+    const patience=Math.max(25,36-idx*1.8);
+    // Orders 1-3 are a tutorial; starting with order 4 the sauce request matters.
+    const sauceMode=idx<3?'free':idx%2===1?'on':'off';
+    order={qty,patience,left:patience,sauceMode};
+    const guest=GUESTS[idx%GUESTS.length];
+    $('guestName').textContent=guest.name;
+    $('guestAvatar').textContent=guest.avatar;
+    $('guestTalk').textContent=guest.talk;
+    $('guestOrder').textContent='타코야끼 '+qty+'알 주세요!';
+    $('orderSauce').className='sauce-order-badge '+sauceMode;
+    $('orderSauce').textContent=sauceMode==='on'?'🍯 소스 추가해주세요!':sauceMode==='off'?'🚫 소스 없이 주세요!':'✨ 소스는 선택이에요!';
+    $('modeHint').className='mode-hint '+(idx>=3?'advanced':'');
+    $('modeHint').textContent=idx>=3?'🔥 도전 주문 · 소스 옵션까지 맞춰주세요!':'🌱 연습 주문 · 소스는 자유롭게!';
+    if(idx===3)toast('🔥 난이도 UP! 이제부터 소스 주문을 맞춰야 해요!');
+  }
+  function stage(w,to){w.stage=to;w.age=0;w.sauced=false}
+  function tap(i){if(state!=='playing')return;const w=wells[i];let success=false;
+    if(w.stage==='burnt'){stage(w,'empty');toast('앗, 새까맣게 탔네요! 버리고 새로 구워요 🗑️');tone(210,.12,'triangle');success=true}
+    else if(selected==='batter'&&w.stage==='empty'){stage(w,'batter');success=true;tone(410,.045)}
+    else if(selected==='octopus'&&w.stage==='batter'){stage(w,'heating');success=true;tone(680,.07)}
+    else if(selected==='flip'&&w.stage==='readyFlip'){stage(w,'flipped');success=true;tone(720,.09);setTimeout(()=>tone(920,.06),80)}
+    else if(selected==='sauce'&&w.stage==='done'&&!w.sauced){
+      w.sauced=true;success=true;tone(760,.08);toast('소스 촤르륵! 🍯 주문 옵션을 확인하세요!');
+    }
+    else if(selected==='plate'&&w.stage==='done'){
+      if(tray.length>=6){toast('포장 상자가 가득 찼어요! 먼저 판매하세요.');tone(240,.12,'triangle');return}
+      tray.push({sauced:w.sauced});stage(w,'empty');success=true;tone(850,.08);if(tray.length>=order.qty)toast('수량 완성! 소스 옵션을 확인하고 전달해요 ♡');
+    }
+    if(!success){
+      if(selected==='sauce'&&w.stage==='done'&&w.sauced)toast('이미 소스를 뿌렸어요! 이제 담아주세요 🥡');
+      else if(selected==='sauce')toast('완성된 타코야끼에 소스를 뿌려주세요 🍯');
+      else if(selected==='flip'&&w.stage==='heating')toast('조금 더 노릇하게 구워요! ⏳');
+      else if(selected==='plate'&&w.stage==='flipped')toast('속까지 익을 때까지 조금만 기다려요!');
+      else if(w.stage==='readyFlip')toast('🥢 뒤집기를 선택하세요!');
+      else if(w.stage==='done')toast(w.sauced?'🥡 이제 담아내세요!':'🍯 소스를 뿌리거나 🥡 담아내세요!');
+      else if(w.stage==='empty')toast('🥣 먼저 반죽을 부어주세요!');
+      else if(w.stage==='batter')toast('🐙 이제 문어를 넣어주세요!');
+      else toast('다른 철판 칸을 눌러보세요!');
+    }
+    render();
+  }
+  function tick(){if(state!=='playing')return;const now=performance.now(),dt=Math.min(.3,(now-last)/1000);last=now;seconds-=dt;order.left-=dt;
+    for(let i=0;i<wells.length;i++){
+      const w=wells[i],heatedDt=dt*HEAT[i];
+      if(w.stage==='heating'){w.age+=heatedDt;if(w.age>=3.1)stage(w,'readyFlip')}
+      else if(w.stage==='readyFlip'){w.age+=heatedDt;if(w.age>5.7){stage(w,'burnt');tone(220,.18,'sawtooth')}}
+      else if(w.stage==='flipped'){w.age+=heatedDt;if(w.age>=2.2)stage(w,'done')}
+      else if(w.stage==='done'){w.age+=heatedDt;if(w.age>7.5){stage(w,'burnt');tone(200,.13,'triangle')}}
+    }
+    if(seconds<=0){seconds=0;endGame('time');return}
+    if(order.left<=0){lives--;combo=0;orderIndex++;tone(210,.25,'triangle');if(lives<=0){endGame('hearts');return}nextOrder();toast('손님이 떠났어요! 다음 주문은 놓치지 마요 💦')}
+    render();
+  }
+  function hasCorrectSauce(){
+    const packed=tray.slice(0,order.qty);
+    return order.sauceMode==='free'||packed.every(ball=>ball.sauced===(order.sauceMode==='on'));
+  }
+  function sauceMismatchMessage(){return order.sauceMode==='on'?'🍯 소스 추가 주문! 소스 없는 알을 눌러 빼주세요.':'🚫 소스 없이 주문! 소스 바른 알을 눌러 빼주세요.'}
+  function serve(){
+    if(state!=='playing')return;
+    if(tray.length<order.qty){toast('타코야끼가 '+(order.qty-tray.length)+'알 더 필요해요!');return}
+    if(!hasCorrectSauce()){toast(sauceMismatchMessage());tone(210,.18,'triangle');return}
+    const packed=tray.splice(0,order.qty);
+    const saucedCount=packed.filter(ball=>ball.sauced).length;
+    const sauceBonus=saucedCount*100;
+    let tip=Math.ceil((order.left/order.patience)*200/50)*50;
+    let reward=order.qty*350+tip+Math.min(combo,5)*100+sauceBonus;
+    money+=reward;combo++;maxCombo=Math.max(maxCombo,combo);sold++;orderIndex++;
+    tone(740,.13);setTimeout(()=>tone(980,.18),105);sparks();nextOrder();render();
+    toast('주문 성공! +'+reward.toLocaleString('ko-KR')+'원 ✨'+(sauceBonus?' (소스 보너스 +'+sauceBonus+'원)':''));
+  }
+  function sparks(){const root=$('game'),colors=['#ffcb60','#fa799b','#8ddfbc','#aa97e8'];for(let i=0;i<18;i++){const el=document.createElement('div');el.className='spark';el.style.left=(65+Math.random()*25)+'%';el.style.top=(40+Math.random()*14)+'%';el.style.background=colors[i%colors.length];el.style.setProperty('--x',(Math.random()*240-120)+'px');el.style.setProperty('--y',(Math.random()*-190-20)+'px');root.append(el);setTimeout(()=>el.remove(),850)}}
+  function render(){
+    $('time').textContent=formatTime(seconds);$('timeBox').classList.toggle('warn',seconds<20);$('money').textContent=coin();$('combo').textContent=combo+' COMBO';$('hearts').textContent='♥ '.repeat(lives)+'♡ '.repeat(3-lives);$('ordersLabel').textContent='판매 '+sold+'건';
+    $('patienceFill').style.width=Math.max(0,order.left/order.patience*100)+'%';$('patienceBar').classList.toggle('low',order.left/order.patience<.3);$('patienceText').textContent=order.left/order.patience<.3?'서둘러요! 💦':order.left/order.patience<.6?'조금 바빠요':'여유만만 ♡';
+    $('trayCount').textContent=tray.length+' / 6알';
+    $('trayBalls').innerHTML=Array.from({length:6},(_,i)=>i<tray.length
+      ?'<button type="button" class="trayball full'+(tray[i].sauced?' sauced':'')+'" data-tray-index="'+i+'" aria-label="'+(i+1)+'번째 '+(tray[i].sauced?'소스 추가':'소스 없음')+' 타코야끼 꺼내 버리기" title="잘못 포장했나요? 클릭해서 버리기">🍡<span class="remove-mark">×</span></button>'
+      :'<div class="trayball empty"></div>').join('');
+    $('trayExtra').innerHTML='🍯 소스 <b>'+tray.filter(x=>x.sauced).length+'알</b> / 소스 없음 <b>'+tray.filter(x=>!x.sauced).length+'알</b> · 잘못 담았다면 알 클릭!';
+    const enough=tray.length>=order.qty,correct=hasCorrectSauce();
+    $('deliver').disabled=!enough;
+    $('deliver').classList.toggle('mismatch',enough&&!correct);
+    $('deliver').textContent=!enough?'타코야끼 전달하기 ♡':correct?'✨ 주문대로 전달하기!':'⚠ 소스 옵션 확인하기';
+    $('trayNote').classList.toggle('mismatch',enough&&!correct);
+    $('trayNote').textContent=enough?(correct?'딱 맞아요! 손님에게 전달하세요 ♡':sauceMismatchMessage()):'주문까지 '+Math.max(0,order.qty-tray.length)+'알 더 필요해요.';
+    wells.forEach((w,i)=>{
+      const el=grill.children[i];if(!el)return;
+      if(el.dataset.stage!==w.stage||el.dataset.sauced!==String(w.sauced)){
+        el.dataset.stage=w.stage;el.dataset.sauced=String(w.sauced);
+        el.innerHTML='<span class="num">'+(i+1)+'</span><span class="heatmark '+(HEAT[i]>=1.10?'hot':HEAT[i]<=.92?'cool':'')+'">'+(HEAT[i]>=1.10?'강':HEAT[i]<=.92?'약':'중')+'</span>'+(w.stage==='empty'?'<span class="plus">+</span><span class="empty-caption">빈 칸</span>':'<span class="ball">'+(['heating','readyFlip'].includes(w.stage)?'<span class="octo"></span>':'')+(w.sauced?'<span class="sauce-stripes"></span>':'')+(w.stage==='burnt'?'<svg class="char-cracks" viewBox="0 0 100 100" aria-hidden="true"><path d="M24 23 L36 36 L28 46 L45 57 L39 72 M36 36 L58 30 L68 40 L82 35 M45 57 L62 62 L72 77" fill="none" stroke="#a96946" stroke-width="2.7" stroke-linecap="round"/></svg><span class="burnt-x">×</span>':'')+'</span>'+(w.stage==='burnt'?'<span class="smoke">♨</span>':'')+'<span class="tag">'+(w.sauced?'소스 완료!':labels[w.stage])+'</span>')+(['heating','flipped'].includes(w.stage)?'<span class="heatbar"><span></span></span>':'');
+        el.setAttribute('aria-label',(i+1)+'번 칸 '+(HEAT[i]>=1.10?'강불':HEAT[i]<=.92?'약불':'보통불')+' '+(w.sauced?'소스 완료':labels[w.stage]||'빈 철판'));
+      }
+      const bar=el.querySelector('.heatbar span');if(bar)bar.style.width=Math.min(100,w.age/(w.stage==='heating'?3.1:2.2)*100)+'%';
+    });
+  }
+  function endGame(why){state='end';clearInterval(loop);let title,desc,icon;if(sold>=6){title='타코야끼 장인 등극!';desc='손님들이 또 오고 싶대요! 멋진 장사였어요.';icon='🏆'}else if(sold>=3){title='오늘도 잘 팔았다!';desc='이 동네 인기 타코야끼 가게가 되었어요!';icon='🎉'}else if(sold>=1){title='첫 장사 성공!';desc='다음엔 더 많은 주문에 도전해 봐요!';icon='🥡'}else{title='아쉬운 영업 마감!';desc='도구를 차례대로 고르면 금방 익숙해질 거예요.';icon='🐙'}if(why==='hearts')desc+=' 손님이 세 번이나 기다리다 돌아갔어요.';$('endTitle').textContent=title;$('endDesc').textContent=desc;$('rankIcon').textContent=icon;$('endMoney').textContent=coin();$('endOrders').textContent=sold+'건';$('endCombo').textContent=maxCombo;$('ending').hidden=false;tone(550,.14)}
+  for(let i=0;i<12;i++){const el=document.createElement('button');el.type='button';el.className='hole';el.dataset.index=i;el.dataset.stage='';el.dataset.sauced='';el.title=(HEAT[i]>=1.10?'강불 · 빨리 익어요':HEAT[i]<=.92?'약불 · 천천히 익어요':'보통 불');grill.appendChild(el)}
+  grill.addEventListener('click',e=>{const el=e.target.closest('.hole');if(el)tap(Number(el.dataset.index))});
+  tools.addEventListener('click',e=>{const el=e.target.closest('[data-tool]');if(el)chooseTool(el.dataset.tool)});
+  $('trayBalls').addEventListener('click',e=>{
+    if(state!=='playing')return;
+    const el=e.target.closest('[data-tray-index]');if(!el)return;
+    tray.splice(Number(el.dataset.trayIndex),1);
+    tone(260,.07,'triangle');toast('포장된 타코야끼를 뺐어요! 다시 만들어요 🗑️');render();
+  });
+  $('deliver').addEventListener('click',serve);$('startBtn').addEventListener('click',start);$('againBtn').addEventListener('click',start);
+  $('soundBtn').addEventListener('click',()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'🔊 효과음 ON':'🔇 효과음 OFF';$('soundBtn').setAttribute('aria-pressed',String(soundOn));tone(620,.07)});
+  document.addEventListener('keydown',e=>{if(e.repeat||e.target.matches('input,textarea'))return;const map={1:'batter',2:'octopus',3:'flip',4:'sauce',5:'plate'};if(map[e.key])chooseTool(map[e.key]);if(e.code==='Space'&&state==='playing'){e.preventDefault();serve()}if(e.key==='Enter'&&state==='intro')start()});
+  wells=Array.from({length:12},newWell);chooseTool('batter');render();
+})();
+</script>
+</body>
+</html>
